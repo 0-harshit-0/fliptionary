@@ -1,0 +1,19 @@
+{
+    "A": [
+        {
+            "word": "Apple",
+            "definition": "A round fruit with red, green, or yellow skin."
+        },
+        {
+            "word": "Anchor",
+            "definition": "A heavy object used to moor a vessel to the seabed."
+        }
+    ],
+    "B": [
+        {
+            "word": "Banana",
+            "definition": "A long curved fruit with a yellow peel."
+        }
+    ],
+    "C": []
+}

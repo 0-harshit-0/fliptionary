@@ -20,7 +20,6 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: 1.5rem;
   gap: 2rem;
   width: 100vw;
 }

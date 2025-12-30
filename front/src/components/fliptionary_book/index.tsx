@@ -1,57 +1,67 @@
-import HTMLFlipBook from "react-pageflip";
+import HTMLFlipBook from 'react-pageflip';
 
-import type { DictionaryData } from "../../types/dictionary";
-import { CoverPage } from "../pages/cover_page";
-import { LetterPage } from "../pages/letter_page";
-import { EndPage } from "../pages/end_page";
+import type { DictionaryData } from '../../types/dictionary';
+import { CoverPage } from '../pages/cover_page';
+import { LetterPage } from '../pages/letter_page';
+import { EndPage } from '../pages/end_page';
 
 type PageFlipApi = {
-    flip: (page_num: number, corner?: "top" | "bottom") => void;
+  flip: (page_num: number, corner?: 'top' | 'bottom') => void;
 };
 
 export type FlipBookHandle = {
-    pageFlip: () => PageFlipApi;
+  pageFlip: () => PageFlipApi;
 };
 
 type FliptionaryBookProps = {
-    book_ref: React.RefObject<FlipBookHandle | null>;
-    dictionary: DictionaryData;
-    letters: readonly string[];
-    width: number;
-    height: number;
-    on_flip: (page_index: number) => void;
+  book_ref: React.RefObject<FlipBookHandle | null>;
+  dictionary: DictionaryData;
+  letters: readonly string[];
+  width: number;
+  height: number;
+  on_flip: (page_index: number) => void;
 };
 
 type FlipEvent = {
-    data: number | string;
+  data: number | string;
 };
 
 export function FliptionaryBook(props: FliptionaryBookProps): JSX.Element {
-    const { book_ref, dictionary, letters, width, height, on_flip } = props;
+  const { book_ref, dictionary, letters, width, height, on_flip } = props;
 
-    return (
-        <HTMLFlipBook
-            width={width}
-            height={height}
-            showCover
-            ref={book_ref}
-            onFlip={(e: FlipEvent) => {
-                const next_index = typeof e.data === "number" ? e.data : Number(e.data);
-                on_flip(Number.isFinite(next_index) ? next_index : 0);
-            }}
-            className="fliptionary__book"
-        >
-            <CoverPage title="Fliptionary" subtitle="A dictionary you can flip through" />
+  console.log(height);
+  return (
+    <HTMLFlipBook
+      key={`${width}-${height}`}
+      width={width}
+      height={height}
+      size="stretch"
+      minWidth={300}
+      minHeight={400}
+      maxWidth={2000}
+      maxHeight={2000}
+      showCover
+      ref={book_ref}
+      onFlip={(e: FlipEvent) => {
+        const next_index = typeof e.data === 'number' ? e.data : Number(e.data);
+        on_flip(Number.isFinite(next_index) ? next_index : 0);
+      }}
+      className="fliptionary__book"
+    >
+      <CoverPage
+        title="Fliptionary"
+        subtitle="A dictionary you can flip through"
+      />
 
-            {letters.map((letter) => (
-                <LetterPage
-                    key={letter}
-                    letter={letter}
-                    entries={dictionary[letter] ?? []}
-                />
-            ))}
+      {letters.map((letter) => (
+        <LetterPage
+          key={letter}
+          letter={letter}
+          entries={dictionary[letter] ?? []}
+        />
+      ))}
 
-            <EndPage title="Thank you for flipping!" subtitle="~ Fliptionary" />
-        </HTMLFlipBook>
-    );
+      <EndPage title="Thank you for flipping!" subtitle="~ Fliptionary" />
+    </HTMLFlipBook>
+  );
 }

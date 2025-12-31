@@ -35,11 +35,9 @@ export function FliptionaryBook(props: FliptionaryBookProps): JSX.Element {
       key={`${width}-${height}`}
       width={width}
       height={height}
-      size="stretch"
       minWidth={300}
       minHeight={400}
       maxWidth={2000}
-      maxHeight={2000}
       showCover
       ref={book_ref}
       onFlip={(e: FlipEvent) => {

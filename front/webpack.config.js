@@ -5,7 +5,7 @@ const TerserWebpackPlugin = require('terser-webpack-plugin');
 module.exports = {
   mode: 'production',
   entry: {
-    script: './script.js',
+    script: './src/script.js',
   },
   devtool: false, // Use source maps without eval
   output: {
@@ -42,8 +42,8 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin({
       patterns: [
-        { from: 'index.html', to: 'index.html' },
-        { from: 'style.css', to: 'style.css' },
+        { from: 'src/index.html', to: 'index.html' },
+        { from: 'src/style.css', to: 'style.css' },
 
         // { from: './robots.txt', to: 'robots.txt' },
         // { from: './sitemap.xml', to: 'sitemap.xml' },

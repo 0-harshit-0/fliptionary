@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+import Page from '/src/page.js';
+
 const canvas = document.querySelector('#canvas');
 canvas.width = innerWidth;
 canvas.height = innerHeight;
@@ -32,16 +34,17 @@ const controls = new OrbitControls(camera, canvas);
 controls.target.set(0, 0, 0);
 controls.update();
 
-const geometry = new THREE.PlaneGeometry(1, 2);
-const material = new THREE.MeshBasicMaterial({
-  color: 0xffff00,
-  side: THREE.DoubleSide,
-  wireframe: true,
-});
-const plane = new THREE.Mesh(geometry, material);
-scene.add(plane);
+// pages setup ======================
 
-scene.add(plane);
+const pageL = new Page(1, 2);
+const pageR = new Page(1, 2);
+
+pageL.plane.position.set(-1, 0, 0);
+pageR.plane.position.set(1, 0, 0);
+scene.add(pageL.plane);
+scene.add(pageR.plane);
+
+// camera, lights, controls setup ======================
 scene.add(camera);
 scene.add(lights);
 

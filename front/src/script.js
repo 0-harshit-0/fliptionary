@@ -3,12 +3,14 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 import Page from '/src/page.js';
 
+// canvas
 const canvas = document.querySelector('#canvas');
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
 // THREE.Object3D.DefaultUp = new THREE.Vector3(0, 0, 1);
 const scene = new THREE.Scene();
+const lights = new THREE.PointLight('white', 0.5);
 const camera = new THREE.PerspectiveCamera(
   10, // fov
   window.innerWidth / window.innerHeight, // aspect
@@ -17,22 +19,13 @@ const camera = new THREE.PerspectiveCamera(
 );
 const renderer = new THREE.WebGLRenderer({ canvas });
 
-renderer.setSize(window.innerWidth, window.innerHeight);
-// document.body.appendChild(renderer.domElement);
 scene.background = new THREE.Color('black');
-
+lights.position.set(500, 0, 105);
 // camera.up.set(0, 0, 1);
 camera.position.set(30, 0, 70);
 camera.lookAt(0, 0, 0);
-
-const color = 'white';
-const intensity = 0.5;
-const lights = new THREE.PointLight(color, intensity);
-lights.position.set(500, 0, 105);
-
-const controls = new OrbitControls(camera, canvas);
-controls.target.set(0, 0, 0);
-controls.update();
+renderer.setSize(window.innerWidth, window.innerHeight);
+// document.body.appendChild(renderer.domElement);
 
 // pages setup ======================
 
@@ -47,6 +40,10 @@ scene.add(pageR.plane);
 // camera, lights, controls setup ======================
 scene.add(camera);
 scene.add(lights);
+
+const controls = new OrbitControls(camera, canvas);
+controls.target.set(0, 0, 0);
+controls.update();
 
 controls.addEventListener('change', () => {
   //mesh.rotateX = 180;

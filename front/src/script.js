@@ -28,6 +28,8 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 // document.body.appendChild(renderer.domElement);
 
 // pages setup ======================
+let topPlaneL = null,
+  topPlaneR = null;
 
 const pageL = new Page(1, 2);
 const pageR = new Page(1, 2);
@@ -36,6 +38,9 @@ pageL.plane.position.set(-1, 0, 0);
 pageR.plane.position.set(1, 0, 0);
 scene.add(pageL.plane);
 scene.add(pageR.plane);
+
+topPlaneL = pageL.plane;
+topPlaneR = pageR.plane;
 
 // camera, lights, controls setup ======================
 scene.add(camera);
@@ -50,3 +55,48 @@ controls.addEventListener('change', () => {
   renderer.render(scene, camera);
 });
 renderer.render(scene, camera);
+
+// ray casting =================================
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let isDragging = false;
+let previousMouseX = 0;
+let selectedObject = null;
+
+// Convert mouse position to normalized device coordinates
+function updateMousePosition(event) {
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+}
+
+canvas.addEventListener('mousedown', (event) => {
+  updateMousePosition(event);
+
+  // Check if we clicked on the plane
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects([topPlaneL, topPlaneR]);
+
+  if (intersects.length > 0) {
+    console.log(intersects);
+    isDragging = true;
+    selectedObject = intersects[0].object;
+    previousMouseX = event.clientX;
+    controls.enabled = false; // Disable OrbitControls while rotating
+  }
+});
+
+canvas.addEventListener('mousemove', (event) => {
+  if (!isDragging || !selectedObject) return;
+
+  const deltaX = event.clientX - previousMouseX;
+  selectedObject.rotation.y += deltaX * 0.01;
+
+  previousMouseX = event.clientX;
+  renderer.render(scene, camera);
+});
+
+canvas.addEventListener('mouseup', () => {
+  isDragging = false;
+  selectedObject = null;
+  controls.enabled = true; // Re-enable OrbitControls
+});

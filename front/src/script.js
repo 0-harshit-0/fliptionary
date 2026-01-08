@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-import Page from '/src/page.js';
+import { Book, Page } from '/src/classes.js';
 
 // canvas
 const canvas = document.querySelector('#canvas');
@@ -26,6 +26,9 @@ camera.position.set(30, 0, 70);
 camera.lookAt(0, 0, 0);
 renderer.setSize(window.innerWidth, window.innerHeight);
 // document.body.appendChild(renderer.domElement);
+
+// book setup ==========================
+const book1 = new Book();
 
 // pages setup ======================
 let topPlaneL = null,

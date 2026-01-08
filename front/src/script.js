@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-import { Book, Page } from '/src/classes.js';
+import { Book, Page, PageGeo } from '/src/classes.js';
+import { randomId } from '/src/utils.js';
 
 // canvas
 const canvas = document.querySelector('#canvas');
@@ -28,23 +29,39 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 // document.body.appendChild(renderer.domElement);
 
 // book setup ==========================
-const book1 = new Book();
+const book1 = new Book(randomId());
 
 // pages setup ======================
-let topPlaneL = null,
-  topPlaneR = null;
+const oldPages = [];
 
-const pageL = new Page(1, 2);
-const pageR = new Page(1, 2);
+for (let i = 0; i < 10; i++) {
+  const newPage = new Page(randomId(), i);
+  oldPages.push(newPage);
 
-pageL.plane.position.set(-1, 0, 0);
-pageR.plane.position.set(1, 0, 0);
-scene.add(pageL.plane);
-scene.add(pageR.plane);
+  if (oldPages.length == 2) {
+    const newPageGeo = new PageGeo(randomId(), 1, 2);
 
-topPlaneL = pageL.plane;
-topPlaneR = pageR.plane;
+    newPageGeo.addMetas(oldPages);
 
+    book1.addPageGeo(newPageGeo.id, newPageGeo);
+    oldPages.length = 0;
+  }
+
+  book1.addPage(newPage.id, newPage);
+}
+const iterator = book1.pagesGeo.keys();
+book1.addActivePageGeo(iterator.next().value);
+book1.addActivePageGeo(iterator.next().value);
+console.log(book1.info(), oldPages);
+
+function initBook() {
+  let i = book1.pagesGeo.size;
+  book1.pagesGeo.forEach((value, key, map) => {
+    value.plane.position.set(0, 0, i--);
+    scene.add(value.plane);
+  });
+}
+initBook();
 // camera, lights, controls setup ======================
 scene.add(camera);
 scene.add(lights);
@@ -77,7 +94,11 @@ canvas.addEventListener('mousedown', (event) => {
 
   // Check if we clicked on the plane
   raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects([topPlaneL, topPlaneR]);
+  const activePlanes = book1.activePagesGeo.map(
+    (z) => book1.pagesGeo.get(z).plane
+  );
+  console.log(activePlanes);
+  const intersects = raycaster.intersectObjects(activePlanes);
 
   if (intersects.length > 0) {
     console.log(intersects);

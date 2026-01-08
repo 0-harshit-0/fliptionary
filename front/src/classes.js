@@ -4,17 +4,19 @@ class Book {
   constructor(
     id,
     name = 'Fliptionary',
-    desc = 'santa clause',
-    pages = new Map()
+    desc = 'santa claus',
+    pages = new Map(),
+    pagesGeo = new Map()
   ) {
     this.id = id;
 
     this.name = name;
     this.desc = desc;
     this.pages = pages;
+    this.pagesGeo = pagesGeo;
 
     //
-    this.activePages = []; // the pages on the top/the pages user is reading //queue
+    this.activePagesGeo = []; // the pages on the top/the pages user is reading //queue
   }
   addPage(id, page) {
     /**
@@ -24,13 +26,22 @@ class Book {
 
     this.pages.set(id, page);
   }
-  addActivePage(id) {
+  addPageGeo(id, pageGeo) {
+    /**
+     *  page- a mesh object
+     */
+    if (!id || !pageGeo) return;
+
+    this.pagesGeo.set(id, pageGeo);
+  }
+  addActivePageGeo(id) {
     /**
      */
-    if (!id || this.activePages.length > 2) return;
+    if (!id || this.activePagesGeo.length > 2) return;
+    let removed = null;
 
-    const removed = this.activePages.shift();
-    this.activePages.push(id);
+    if (this.activePagesGeo.length == 2) removed = this.activePagesGeo.shift();
+    this.activePagesGeo.push(id);
 
     return removed;
   }
@@ -40,15 +51,23 @@ class Book {
 }
 
 class Page {
-  constructor(ids, pageNumbers, width, height, color = 0xffff00, wire = true) {
+  constructor(id, pageNumber) {
     /**
-     * ids - array
-     * pageNumbers - array
      */
-    // each page is double sided, so, from ltr perspective, 1 id and page number for the left, and other for the right.
-    this.ids = ids;
-    this.pns = pageNumbers;
-
+    this.id = id;
+    this.pn = pageNumber;
+    this.content = 'avada-kedavra';
+  }
+  info() {
+    return this;
+  }
+}
+class PageGeo {
+  constructor(id, width, height, color = 0xffff00, wire = true) {
+    /**
+     */
+    this.id = id;
+    // each page is double sided, so, from ltr perspective, one id and page number for the left, and other for the right.
     this.geometry = new THREE.PlaneGeometry(width, height);
     this.material = new THREE.MeshBasicMaterial({
       color: color,
@@ -58,10 +77,16 @@ class Page {
 
     //
     this.plane = new THREE.Mesh(this.geometry, this.material);
+    this.pagesMeta = []; // 0 - left, 1 - right
+  }
+  addMetas(metas) {
+    metas.forEach((z) => {
+      this.pagesMeta.push(z);
+    });
   }
   info() {
     return this;
   }
 }
 
-export { Book, Page };
+export { Book, Page, PageGeo };

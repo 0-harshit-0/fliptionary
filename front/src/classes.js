@@ -68,7 +68,8 @@ class PageGeo {
      */
     this.id = id;
     // each page is double sided, so, from ltr perspective, one id and page number for the left, and other for the right.
-    this.geometry = new THREE.PlaneGeometry(width, height);
+    this.geometry = new THREE.PlaneGeometry(width, height, 10, 20);
+    this.geometry.translate(width / 2, height / 2, 0);
     this.material = new THREE.MeshBasicMaterial({
       color: color,
       side: THREE.DoubleSide,

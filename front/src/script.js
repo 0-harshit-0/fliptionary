@@ -23,7 +23,7 @@ const renderer = new THREE.WebGLRenderer({ canvas });
 scene.background = new THREE.Color('black');
 lights.position.set(500, 0, 105);
 // camera.up.set(0, 0, 1);
-camera.position.set(30, 0, 70);
+camera.position.set(0, 0, 70);
 camera.lookAt(0, 0, 0);
 renderer.setSize(window.innerWidth, window.innerHeight);
 // document.body.appendChild(renderer.domElement);
@@ -32,34 +32,35 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 const book1 = new Book(randomId());
 
 // pages setup ======================
-const oldPages = [];
+function initBook() {
+  const oldPages = [];
+  for (let i = 0; i < 10; i++) {
+    const newPage = new Page(randomId(), i);
+    oldPages.push(newPage);
 
-for (let i = 0; i < 10; i++) {
-  const newPage = new Page(randomId(), i);
-  oldPages.push(newPage);
+    if (oldPages.length == 2) {
+      const newPageGeo = new PageGeo(randomId(), 1, 2);
 
-  if (oldPages.length == 2) {
-    const newPageGeo = new PageGeo(randomId(), 1, 2);
+      newPageGeo.addMetas(oldPages);
 
-    newPageGeo.addMetas(oldPages);
+      book1.addPageGeo(newPageGeo.id, newPageGeo);
+      oldPages.length = 0;
+    }
 
-    book1.addPageGeo(newPageGeo.id, newPageGeo);
-    oldPages.length = 0;
+    book1.addPage(newPage.id, newPage);
   }
 
-  book1.addPage(newPage.id, newPage);
-}
-const iterator = book1.pagesGeo.keys();
-book1.addActivePageGeo(iterator.next().value);
-book1.addActivePageGeo(iterator.next().value);
-console.log(book1.info(), oldPages);
-
-function initBook() {
-  let i = book1.pagesGeo.size;
+  let z = book1.pagesGeo.size;
   book1.pagesGeo.forEach((value, key, map) => {
-    value.plane.position.set(0, 0, i--);
+    value.plane.position.set(0, 0, z);
     scene.add(value.plane);
+    z -= 0.01;
   });
+
+  const iterator = book1.pagesGeo.keys();
+  book1.addActivePageGeo(iterator.next().value);
+  book1.addActivePageGeo(iterator.next().value);
+  console.log(book1.info(), oldPages);
 }
 initBook();
 // camera, lights, controls setup ======================
@@ -94,14 +95,12 @@ canvas.addEventListener('mousedown', (event) => {
 
   // Check if we clicked on the plane
   raycaster.setFromCamera(mouse, camera);
-  const activePlanes = book1.activePagesGeo.map(
-    (z) => book1.pagesGeo.get(z).plane
-  );
-  console.log(activePlanes);
+  const activePlanes = [...book1.pagesGeo.values()].map((z) => z.plane);
+  console.log(activePlanes, 'activePlanes');
   const intersects = raycaster.intersectObjects(activePlanes);
 
   if (intersects.length > 0) {
-    console.log(intersects);
+    console.log(intersects, 'intersects');
     isDragging = true;
     selectedObject = intersects[0].object;
     previousMouseX = event.clientX;

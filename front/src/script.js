@@ -110,9 +110,16 @@ canvas.addEventListener('mousedown', (event) => {
 
 canvas.addEventListener('mousemove', (event) => {
   if (!isDragging || !selectedObject) return;
+  // Convert 180° to radians: 180° = π radians
+  const minRotation = -Math.PI; //-Math.PI / 2; // -90°
+  const maxRotation = 0; //Math.PI / 2; // +90°
 
   const deltaX = event.clientX - previousMouseX;
   selectedObject.rotation.y += deltaX * 0.01;
+  selectedObject.rotation.y = Math.max(
+    minRotation,
+    Math.min(maxRotation, selectedObject.rotation.y)
+  );
 
   previousMouseX = event.clientX;
   renderer.render(scene, camera);

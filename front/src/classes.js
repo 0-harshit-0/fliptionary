@@ -70,10 +70,12 @@ class PageGeo {
     // each page is double sided, so, from ltr perspective, one id and page number for the left, and other for the right.
     this.geometry = new THREE.PlaneGeometry(width, height, 10, 20);
     this.geometry.translate(width / 2, height / 2, 0);
-    this.material = new THREE.MeshBasicMaterial({
+    this.material = new THREE.MeshLambertMaterial({
       color: color,
       side: THREE.DoubleSide,
       wireframe: wire,
+      flatShading: false,
+      // map: new THREE.TextureLoader().load('data:image/png;base64,iVBORw0KG...'),
       emissive: 0x222222, // Slight glow
     });
 

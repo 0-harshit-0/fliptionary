@@ -11,7 +11,8 @@ canvas.height = innerHeight;
 
 // THREE.Object3D.DefaultUp = new THREE.Vector3(0, 0, 1);
 const scene = new THREE.Scene();
-const lights = new THREE.PointLight('white', 0.5);
+const light = new THREE.DirectionalLight('white', 1);
+const ambientLight = new THREE.AmbientLight(0x404040, 1);
 const camera = new THREE.PerspectiveCamera(
   10, // fov
   window.innerWidth / window.innerHeight, // aspect
@@ -19,14 +20,23 @@ const camera = new THREE.PerspectiveCamera(
   1000 // far
 );
 const renderer = new THREE.WebGLRenderer({ canvas });
+const controls = new OrbitControls(camera, canvas);
 
 scene.background = new THREE.Color('black');
-lights.position.set(500, 0, 105);
+
+light.position.set(30, 10, 70);
+light.castShadow = true;
+
 // camera.up.set(0, 0, 1);
-camera.position.set(0, 0, 70);
+camera.position.set(0, 10, 40);
 camera.lookAt(0, 0, 0);
+
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Softer shadows
 // document.body.appendChild(renderer.domElement);
+
+controls.target.set(0, 0, 0);
 
 // book setup ==========================
 const book1 = new Book(randomId());
@@ -54,6 +64,8 @@ function initBook() {
   book1.pagesGeo.forEach((value, key, map) => {
     value.plane.position.set(0, 0, z);
     scene.add(value.plane);
+    value.plane.castShadow = true; // Plane casts shadow
+    value.plane.receiveShadow = true; // Plane receives shadow
     z -= 0.01;
   });
 
@@ -62,20 +74,19 @@ function initBook() {
   book1.addActivePageGeo(iterator.next().value);
   console.log(book1.info(), oldPages);
 }
-initBook();
-// camera, lights, controls setup ======================
-scene.add(camera);
-scene.add(lights);
 
-const controls = new OrbitControls(camera, canvas);
-controls.target.set(0, 0, 0);
-controls.update();
+// lights, camera, controls setup ======================
+scene.add(ambientLight);
+scene.add(light);
+scene.add(camera);
 
 controls.addEventListener('change', () => {
   //mesh.rotateX = 180;
   renderer.render(scene, camera);
 });
 renderer.render(scene, camera);
+initBook();
+controls.update();
 
 // ray casting =================================
 const raycaster = new THREE.Raycaster();

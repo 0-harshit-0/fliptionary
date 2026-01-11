@@ -63,13 +63,14 @@ class Page {
   }
 }
 class PageGeo {
-  constructor(id, width, height, color = 0xfafafa, wire = false) {
+  constructor(id, width, height, color = 0xfafafa, wire = true) {
     /**
      */
     this.id = id;
+
     // each page is double sided, so, from ltr perspective, one id and page number for the left, and other for the right.
     this.geometry = new THREE.PlaneGeometry(width, height, 10, 20);
-    this.geometry.translate(width / 2, height / 2, 0);
+    this.geometry.translate(width / 1.9, height / 2, 0);
     this.material = new THREE.MeshLambertMaterial({
       color: color,
       side: THREE.DoubleSide,
@@ -78,6 +79,7 @@ class PageGeo {
       // map: new THREE.TextureLoader().load('data:image/png;base64,iVBORw0KG...'),
       emissive: 0x222222, // Slight glow
     });
+    // this.material.frustumCulled = false;
 
     //
     this.plane = new THREE.Mesh(this.geometry, this.material);
@@ -87,6 +89,9 @@ class PageGeo {
     metas.forEach((z) => {
       this.pagesMeta.push(z);
     });
+  }
+  vertices() {
+    return this.geometry.attributes.position;
   }
   info() {
     return this;

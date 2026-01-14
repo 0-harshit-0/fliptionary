@@ -67,10 +67,19 @@ class PageGeo {
     /**
      */
     this.id = id;
+    /**
+     * force = mass * accelaration // assuming all the things have a mass of 1
+     */
+    this.mass = 1;
 
     // each page is double sided, so, from ltr perspective, one id and page number for the left, and other for the right.
     this.geometry = new THREE.PlaneGeometry(width, height, 10, 20);
-    this.geometry.translate(width / 1.9, height / 2, 0);
+    // this.geometry.translate(width / 1.9, height / 2, 0);
+    this.geometry.userData.original = new Float32Array(
+      this.geometry.attributes.position.array
+    );
+    this.geometry.userData.mass = this.mass;
+
     this.material = new THREE.MeshLambertMaterial({
       color: color,
       side: THREE.DoubleSide,
@@ -85,13 +94,13 @@ class PageGeo {
     this.plane = new THREE.Mesh(this.geometry, this.material);
     this.pagesMeta = []; // 0 - left, 1 - right
   }
+  vertices() {
+    return this.geometry.attributes.position;
+  }
   addMetas(metas) {
     metas.forEach((z) => {
       this.pagesMeta.push(z);
     });
-  }
-  vertices() {
-    return this.geometry.attributes.position;
   }
   info() {
     return this;
